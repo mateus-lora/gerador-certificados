@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emissão de Certificado</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="container">
+    <h2>Emissão de Certificado</h2>
+    <p class="subtitle">Preencha seus dados para receber o certificado de participação direto no seu e-mail.</p>
+    
+    <input type="text" id="nome" placeholder="Seu Nome Completo" required>
+    <input type="email" id="email" placeholder="Seu E-mail" required>
+    
+    <button id="btn-submit" onclick="solicitarCertificado()">Receber Certificado</button>
+
+    <div id="status-box">
+        <span id="status-texto">Aguardando...</span>
+    </div>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+redis
+pika
+pydantic
+pydantic-settings
+reportlab
+python-dotenv

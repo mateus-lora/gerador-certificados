@@ -1,0 +1,11 @@
+# Senhas e configurações sensíveis
+.env
+
+# Cache do Python
+**/__pycache__/
+
+# PDFs gerados durante os testes
+servidor/certificados/*.pdf
+
+# Configurações locais da IDE
+.vscode/
