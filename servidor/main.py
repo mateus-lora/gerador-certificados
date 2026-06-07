@@ -1,5 +1,6 @@
 import uuid
 import os
+import hashlib
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -35,16 +36,22 @@ def obter_configuracoes():
 
 @app.post("/api/certificados/")
 def criar_certificado(dados: CertificadoReq):
+    # o hashlib junta o nome e email do aluno para criar uma chave (hash) para evitar duplicidade de certificados
+    chave = f"dedup:{hashlib.md5(f'{dados.nome_aluno}{dados.email_aluno}'.encode()).hexdigest()}"
+    task_id_existente = cache._client.get(chave)
+
+    if task_id_existente:
+        return {"task_id": task_id_existente, "mensagem": "Certificado já existe."}
+
     task_id = str(uuid.uuid4())
+    # o setex do Redis define a chave com um tempo de expiração (24 horas) para evitar que o cache cresça indefinidamente
+    cache._client.set(chave, task_id, 86400)
     cache.set_status(task_id, "Processando na fila...")
-    
-    payload = {
-        "task_id": task_id, 
-        "nome_aluno": dados.nome_aluno, 
-        "email_aluno": dados.email_aluno
-    }
-    publisher.publish_task(payload)
-    
+    publisher.publish_task({
+    "task_id": task_id,
+    "nome_aluno": dados.nome_aluno,
+    "email_aluno": dados.email_aluno
+})
     return {"task_id": task_id, "mensagem": "Solicitação em processamento."}
 
 @app.get("/api/status/{task_id}")

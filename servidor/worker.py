@@ -1,6 +1,7 @@
 import pika
 import json
 import sys
+import os
 from config import settings
 from database import CacheService
 from services.pdf_generator import CertificatePDFGenerator
@@ -31,15 +32,23 @@ class QueueWorker:
         task_id = dados['task_id']
         nome = dados['nome_aluno']
         email = dados['email_aluno']
-        
+
         print(f"\n [x] Processando ID: {task_id} ({nome})")
-        
+
+        caminho_local = f"certificados/certificado_{task_id}.pdf"
+        link_pdf = f"{settings.BASE_URL}/certificados/certificado_{task_id}.pdf"
+
+        # gera o PDF só se ainda não existe em disco
         self.cache.set_status(task_id, "Gerando PDF...")
-        link_pdf, caminho_local = self.pdf_engine.generate(nome, task_id)
-        
+        if not os.path.exists(caminho_local):
+            link_pdf, caminho_local = self.pdf_engine.generate(nome, task_id)
+
+        # envia o e-mail só se ainda não foi enviado
         self.cache.set_status(task_id, "Enviando e-mail...")
-        self.email_engine.enviar_com_anexo(email, nome, caminho_local)
-        
+        if not self.cache._client.exists(f"email_sent:{task_id}"):
+            self.email_engine.enviar_com_anexo(email, nome, caminho_local)
+            self.cache._client.set(f"email_sent:{task_id}", "1", 86400 * 7)
+
         self.cache.set_status(task_id, link_pdf)
         print(f" [v] Task {task_id} concluída!")
 

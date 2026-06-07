@@ -101,9 +101,9 @@ Exemplo:
 
 ```env
 EMAIL_HOST=smtp.gmail.com
-EMAIL_PORT=587
-EMAIL_REMETENTE=seu_email@gmail.com
-SENHA_REMETENTE=sua_senha
+EMAIL_PORT=465
+EMAIL_REMETENTE=
+SENHA_REMETENTE=
 ```
 
 ---
