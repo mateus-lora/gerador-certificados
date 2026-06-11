@@ -38,6 +38,17 @@ async function solicitarCertificado() {
         if (!resposta.ok) throw new Error("Erro no servidor");
 
         const dados = await resposta.json();
+
+        // Se o Back-End avisar que já existe
+        if (dados.mensagem === "Certificado já existe.") {
+            const htmlAviso = "ℹ️ <strong>Aviso:</strong> Este certificado já foi enviado anteriormente! Verifique sua caixa de entrada.";
+            atualizarUIStatus(statusBox, statusTexto, "#d1ecf1", "#0c5460", htmlAviso);
+            nomeInput.value = '';
+            emailInput.value = '';
+            return; // Interrompe a função para não chamar o monitoramento da fila
+        }
+
+        // Se for um certificado novo, segue o fluxo normal
         monitorarProgressoFila(dados.task_id, statusBox, statusTexto, nomeInput, emailInput);
     } catch (error) {
         atualizarUIStatus(statusBox, statusTexto, "#f8d7da", "#721c24", "Erro ao conectar com o servidor. Tente novamente.");
