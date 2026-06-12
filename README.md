@@ -4,6 +4,10 @@ Este ecossistema foi projetado para simular um cenário de produção em arquite
 
 ---
 
+## Integrantes:
+* Mateus Lora - 1136218
+* Gabriel Hanel - 1135926
+
 ## 🛠️ Tecnologias Utilizadas
 
 ### Front-End
